@@ -1,2 +1,3 @@
 # 100DaysofCode
-100 Days of Code - Udemy
+
+This repository is intended to be a collection of the exercises from the 100 Days of Code course on Udemy. 
