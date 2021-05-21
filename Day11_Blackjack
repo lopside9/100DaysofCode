@@ -1,0 +1,118 @@
+# Importing random module so we can choose random cards from an infinite deck
+import random
+
+# Creating a variable that lets game continue until user says they are finished
+will_play = True
+# new_card = True
+
+# Ask user if they want to play a game of blackjack
+wants_to_play = input("Would you like to play a game of blackjack? Type 'y' or 'n':\n").lower()
+if wants_to_play == "n":
+    will_play = False
+
+# Creating a variable to hold card values, assuming Ace = 11 first
+card_list = [11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
+
+
+# Create a new function that gives you a new card
+def add_new_card(hand):
+    hand.append(random.choice(card_list))
+
+
+# Create a new function to add all values in hands
+def sum_hand_value(hand):
+    hand_total = 0
+    for value in hand:
+        hand_total += value
+    return hand_total
+
+
+# Create a function that checks the score of the player's hand
+def check_score(hand):
+    hand_total = sum_hand_value(hand)
+    while hand_total > 21:
+        if 11 in hand:
+            # Looks for first incident of an "Ace" in players hand
+            # And changes it to a 1 if the total is over 21
+            ace_position = hand.index(11)
+            hand[ace_position] = 1
+        hand_total = sum_hand_value(hand)
+        break
+    return hand_total
+
+
+# Create a function that finds the winner
+def find_winner(hand_total1, hand_total2):
+    if hand_total1 <= 21 and hand_total2 <= 21:
+        winner_total = max(hand_total1, hand_total2)
+        if hand_total1 == hand_total2:
+            print(f"It's a draw!")
+        elif hand_total1 > hand_total2:
+            print(f"You win with a total of {winner_total}! The computer had a total of {hand_total2}.")
+        else:
+            print(f"You lose! The CPU beat your score with {winner_total}.")
+    elif hand_total1 <= 21 and hand_total2 > 21:
+        print(f"You win with a total of {hand_total1} and the CPU went bust!")
+    else:
+        print(f"You lose because you were bust! CPU wins with a total of {hand_total2}")
+
+
+def play_game():
+    player_hand = []
+    cpu_hand = []
+    while will_play:
+        # Print starting message
+        print("Welcome to the Not-So-Subtle-Taking-All-Your-Monies Casino's Blackjack Table!")
+        # Creating a for loop to choose 2 cards for player's starting hand
+        for i in range(2):
+            add_new_card(player_hand)
+        player_hand_total = check_score(player_hand)
+        if player_hand_total <= 21:
+            print(f"Your starting hand is {player_hand}, with a current total of: {player_hand_total}")
+        else:
+            print(f"Your starting hand is {player_hand}. Unfortunately your hand is now {player_hand_total}! "
+                  "You have gone bust!")
+
+        # Choosing 1 card for CPU's starting hand as player cannot see the second
+        add_new_card(cpu_hand)
+        cpu_hand_total = check_score(cpu_hand)
+        print(f"The CPU's starting hand is {cpu_hand}, with a current total of: {cpu_hand_total}")
+
+        # Now ask player if they want a new card and calculate new score
+        new_card = True
+        while new_card and player_hand_total <= 21:
+            add_player_card = input("Would you like to ask for an additional card? 'y' or 'n':\n").lower()
+            if add_player_card == "n":
+                new_card = False
+                print(f"Your final hand is {player_hand}, with a final total of {player_hand_total}.")
+            else:
+                add_new_card(player_hand)
+                player_hand_total = check_score(player_hand)
+                if player_hand_total <= 21:
+                    print(f"Your new hand is {player_hand}, with a current total of: {player_hand_total}")
+                else:
+                    print(f"Your new hand is {player_hand}. Unfortunately your hand is now {player_hand_total}! "
+                          "You have gone bust!")
+                    break
+
+        # Create loop for CPU hand
+        while cpu_hand_total < 17:
+            add_new_card(cpu_hand)
+            cpu_hand_total = check_score(cpu_hand)
+        print(f"The CPU's final hand is {cpu_hand}, with a final total of {cpu_hand_total}.")
+        find_winner(player_hand_total, cpu_hand_total)
+        break
+
+
+# Create function for another game
+def another_game():
+    play_another = input("Would you like to play another game? 'y' or 'n':\n").lower()
+    if play_another == "n":
+        will_play = False
+    else:
+        play_game()
+        another_game()
+
+
+play_game()
+another_game()
