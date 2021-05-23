@@ -1,0 +1,45 @@
+# Creating a number guessing game
+# Importing the random module so that I can generate a random number between 1 and 100
+import random
+
+
+# Creating a function so that we can call it to play the game and for recursion later
+def play_game():
+    # Does the user want to play? Otherwise, quit the code
+    wants_to_play = input("Would you like to play a game of guess the number?: 'y' 'n'\n").lower()
+    if wants_to_play == "y":
+        # Creating a variable so that we know if the program should continue or not
+        game_continue = True
+        # Sets user difficulty and the number of tries that they have
+        user_difficulty = input("Would you like to play the easy version or the hard version?:\n").lower()
+        if user_difficulty == "easy":
+            tries = 10
+        else:
+            tries = 5
+
+        random_number = random.randint(1, 100)
+        user_guess = 0
+        # While loop to check if game should continue and user still not guessed the number correctly, run this
+        while game_continue and user_guess != random_number:
+            print(f"You have {tries} tries remaining.")
+            # Game over conditional
+            if tries == 0:
+                print("You have run out of tries. Game over.")
+                game_continue = False
+            else:
+                # Checking the guess against the randomly generated number
+                user_guess = int(input("Please guess a number between 1 and 100: "))
+                if user_guess == random_number:
+                    print(f"Well done! You have guessed correctly. It was {random_number}.")
+                    game_continue = False
+                elif user_guess < random_number:
+                    tries -= 1
+                    print(f"Your guess is too low! You have {tries} tries remaining. Please try again.")
+                else:
+                    tries -= 1
+                    print(f"Your guess is too high! You have {tries} tries remaining. Please try again.")
+        # Calling the function again for recursion
+        play_game()
+
+
+play_game()
