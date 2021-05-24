@@ -68,16 +68,19 @@ def check_guess():
   return score
 
 
-# 
+# Starting the game by picking a random entry from the game_data dictionary
 a = random_pick_a()
 print(art.vs)
+# Picks another random entry from the game_data dictionary, checks it's not the same as a, and then assigns it to value b
 b = random_pick_b()
+# Asks the player to choose which has the higher IG follower count, and checks if it is correct
 if check_guess() == 1:
   player_score += 1
   print(player_score)
+  # If correct, it choose another and carries on looping
   print(art.logo)
-  # This is my problem line
   while game_continue:
+    # Checks if option a should change to the previous option b (which was correct / higher)
     if a["follower_count"] < b["follower_count"]:
       a = b
       print(f"Compare A: {a['name']}, a {a['description'].lower()}, from {a['country']}")
