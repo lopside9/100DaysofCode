@@ -1,13 +1,8 @@
-# NOT YET FINISHED HAS BUGS!
-
-# Creating a coffee machine program
-
 # Dictionary for different types of coffees, including ingredients and the cost
 MENU = {
     "espresso": {
         "ingredients": {
             "water": 50,
-            # "milk": 0,
             "coffee": 18,
         },
         "cost": 1.5,
@@ -34,73 +29,63 @@ resources = {
     "water": 300,
     "milk": 200,
     "coffee": 100,
-    # "money": 0,
 }
 
 
-# Create a function to check if resources are enough
-def check_resources():
+def print_resources():
+    """Prints current resources in the machine"""
+    print(f"water: {resources['water']}ml")
+    print(f"milk: {resources['milk']}ml")
+    print(f"coffee: {resources['coffee']}ml")
+    print(f"money: ${revenue:.2f}")
+
+
+def check_resources(chosen_coffee):
+    """Check if there are enough resources for the user's chosen coffee. Returns True if there are, and False if not."""
     sufficient_resources = True
-    current_resources = {"water": resources["water"] - MENU[coffee_chosen]["ingredients"]["water"],
-                         "milk": resources["milk"] - MENU[coffee_chosen]["ingredients"]["milk"],
-                         "coffee": resources["coffee"] - MENU[coffee_chosen]["ingredients"]["coffee"]}
-    for i in current_resources:
-        if current_resources[i] < 0:
-            print(f"There is not enough {i}!")
+    for item in MENU[chosen_coffee]["ingredients"]:
+        if MENU[chosen_coffee]["ingredients"][item] > resources[item]:
             sufficient_resources = False
+            print(f"Sorry, there is not enough {item} for your {chosen_coffee}.")
     return sufficient_resources
 
 
-# Create a function to ask user to put in number of coins
-def coin_input():
-    number_of_pennies = int(input("How many pennies would you like to insert?: "))
-    number_of_nickels = int(input("How many nickels would you like to insert?: "))
-    number_of_dimes = int(input("How many dimes would you like to insert?: "))
-    number_of_quarters = int(input("How many quarters would you like to insert?: "))
-    total = (number_of_pennies * 0.01) + (number_of_nickels * 0.05) + (number_of_dimes * 0.10) + \
-            (number_of_quarters * 0.25)
-    print(f"You have inserted a total of ${total:.2f}.\n")
+def total_cost():
+    """Checks if the user has enough money for their coffee. Returns the total of coins inserted."""
+    total = int(input("How many pennies do you want to insert?: ")) * 0.01
+    total += int(input("How many nickels do you want to insert?: ")) * 0.05
+    total += int(input("How many dimes do you want to insert?: ")) * 0.1
+    total += int(input("How many quarters do you want to insert?: ")) * 0.25
     return total
 
 
-# Check coins inserted is more than enough of the cost
-def check_total(coffee_cost, coin_total):
-    sufficient_money = True
-    difference = coin_total - coffee_cost
-    if difference < 0:
-        difference *= -1
-        print(f"That's not enough! You are short ${difference:.2f}. You will be refunded your ${coin_total:.2f}.")
-        sufficient_money = False
+def subtract_resources(chosen_coffee):
+    for item in MENU[chosen_coffee]["ingredients"]:
+        resources[item] -= MENU[chosen_coffee]["ingredients"][item]
+    return resources
+
+
+machine_start = True
+
+revenue = 0
+
+while machine_start:
+    user_choice = input("What would you like? (espresso / latte / cappuccino):\n").lower()
+    if user_choice == "off":
+        machine_start = False
+    elif user_choice == "report":
+        print_resources()
     else:
-        print(f"Here is your change of ${difference:.2f}.\n")
-    return sufficient_money
-
-
-# Start by asking user if they want a coffee
-
-coffee_machine_start = True
-
-wants_coffee = input("Would you like to buy a coffee? 'y' or 'n':\n")
-if wants_coffee == 'n':
-    coffee_machine_start = False
-
-# Ask what type of coffee they would like
-
-coffee_chosen = input("Which coffee would you like? (espresso / latte / cappuccino):\n").lower()
-if coffee_chosen == "off":
-    coffee_machine_start = False
-if coffee_chosen == "report":
-    print(f"Water: {resources['water']}ml")
-    print(f"Milk: {resources['milk']}ml")
-    print(f"Coffee: {resources['coffee']}g")
-    print(f"Money: ${resources['money']}")
-
-# This while start is the problem
-# while coffee_machine_start:
-if check_resources():
-    print(f"That will be ${MENU[coffee_chosen]['cost']:.2f} please.")
-    if check_total(MENU[coffee_chosen]["cost"], coin_input()):
-        print(f"Here is your {coffee_chosen}. Enjoy!")
-        resources = {"water": resources["water"] - MENU[coffee_chosen]["ingredients"]["water"],
-                     "milk": resources["milk"] - MENU[coffee_chosen]["ingredients"]["milk"],
-                     "coffee": resources["coffee"] - MENU[coffee_chosen]["ingredients"]["coffee"]}
+        if check_resources(user_choice):
+            print(f"Your {user_choice} will cost ${MENU[user_choice]['cost']:.2f}.")
+            change = total_cost() - MENU[user_choice]["cost"]
+            if change >= 0:
+                subtract_resources(user_choice)
+                revenue += MENU[user_choice]["cost"]
+                print(f"Here is your change: ${change:.2f}.")
+                print(f"Here is your {user_choice}!")
+            else:
+                print("Not enough money!")
+                machine_start = False
+        else:
+            machine_start = False
