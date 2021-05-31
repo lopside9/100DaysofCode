@@ -1,0 +1,22 @@
+import turtle as t
+import random
+
+timmy = t.Turtle()
+timmy.shape("turtle")
+timmy.color("green")
+screen = t.Screen()
+timmy.speed(0)
+t.colormode(255)
+
+
+def draw_circle(number):
+    circle_tilt = 360 / number
+    for i in range(number):
+        timmy.pencolor(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+        timmy.circle(100)
+        timmy.left(circle_tilt)
+
+
+draw_circle(100)
+
+screen.exitonclick()
